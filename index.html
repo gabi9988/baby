@@ -4,61 +4,99 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Surpresa de Dia dos Namorados 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      background-color: #ffe6f0;
-      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #ffe6f0, #ffe0ec);
+      font-family: 'Poppins', sans-serif;
       text-align: center;
-      padding: 40px;
+      padding: 20px;
       margin: 0;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      overflow-x: hidden;
     }
+
     h1 {
       color: #ff4d88;
       margin-bottom: 20px;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
     }
+
     img {
-      max-width: 90%;
-      height: auto;
+      width: 100%;
+      max-width: 400px;
       border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
       margin-top: 20px;
     }
+
     .hearts {
-      font-size: 30px;
+      font-size: 2rem;
       color: #ff4d88;
       margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
     }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
     .music {
       margin-top: 30px;
     }
+
     .music button {
       background-color: #ff4d88;
       color: white;
       border: none;
       padding: 15px 30px;
       font-size: 1.2em;
-      border-radius: 25px;
+      border-radius: 50px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      box-shadow: 0 0 15px rgba(255, 77, 136, 0.4);
+      transition: all 0.3s ease;
     }
+
     .music button:hover {
       background-color: #e63c76;
+      box-shadow: 0 0 20px rgba(255, 77, 136, 0.6);
     }
+
     .pedido {
       display: none;
       opacity: 0;
       transition: opacity 2s ease;
       margin-top: 40px;
-      max-width: 600px;
+      padding: 0 20px;
     }
+
     .pedido.show {
       display: block;
       opacity: 1;
+    }
+
+    #player {
+      display: none;
+    }
+
+    @media (max-width: 500px) {
+      .music button {
+        padding: 12px 24px;
+        font-size: 1em;
+      }
+
+      img {
+        border-radius: 15px;
+      }
     }
   </style>
 </head>
@@ -68,15 +106,7 @@
 
   <div class="music">
     <button id="botaoMusica">💖 Tocar Música</button>
-
-    <iframe
-      id="ytplayer"
-      width="0"
-      height="0"
-      frameborder="0"
-      allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-      src="https://www.youtube.com/embed/HoPZcG7Lqr4?enablejsapi=1" 
-    ></iframe>
+    <div id="player"></div>
   </div>
 
   <div class="pedido" id="pedido">
@@ -84,21 +114,35 @@
     <img src="pedido-namoro-flork.jpg" alt="Pedido de namoro Flork fofo" />
   </div>
 
+  <!-- Script da API do YouTube -->
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    const botaoMusica = document.getElementById('botaoMusica');
-    const player = document.getElementById('ytplayer');
-    const pedido = document.getElementById('pedido');
+    let player;
 
-    botaoMusica.addEventListener('click', () => {
-      // Recarrega o src para forçar o autoplay (já com autoplay=1 no src)
-      player.src = player.src + '&autoplay=1';
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '0',
+        width: '0',
+        videoId: 'HoPZcG7Lqr4', // Ainda Bem - Vanessa da Mata
+        events: {
+          'onReady': onPlayerReady
+        }
+      });
+    }
 
-      botaoMusica.style.display = 'none';
+    function onPlayerReady(event) {
+      const botaoMusica = document.getElementById('botaoMusica');
+      const pedido = document.getElementById('pedido');
 
-      setTimeout(() => {
-        pedido.classList.add('show');
-      }, 5000);
-    });
+      botaoMusica.addEventListener('click', () => {
+        event.target.playVideo();
+        botaoMusica.style.display = 'none';
+
+        setTimeout(() => {
+          pedido.classList.add('show');
+        }, 5000);
+      });
+    }
   </script>
 </body>
 </html>
